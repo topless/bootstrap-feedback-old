@@ -1,5 +1,9 @@
-feedback
-========
+bootstrap-feedback
+==================
+# This is a port of the original
+[feedback](http://ivoviz.github.io/feedback/) plugin for
+[Bootstrap](https://github.com/twbs/bootstrap)
+
 
 Feedback tool similar to the Google Feedback based on jQuery and HTML2Canvas.
 
@@ -26,7 +30,7 @@ Init plugin:
 
 * jQuery
 * html2canvas
-    
+
 ## Compatibility
 
 Pretty much it should be working on any browser with `canvas` support. Browsers with no canvas support won't display the feedback button.

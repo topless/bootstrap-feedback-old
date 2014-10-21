@@ -1,0 +1,9 @@
+{
+  "name": "bootstrap-feedback",
+  "dependencies": {
+    "bootstrap": "~3",
+    "font-awesome": "~4",
+    "jquery": "~2",
+    "html2canvas": "~0.4"
+  }
+}
