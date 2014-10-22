@@ -53,6 +53,12 @@
 				'<div id="feedback-overview-error">Please enter a description.</div>' +
 				'<div class="feedback-wizard-close">&times;</div>' +
 				'</div>',
+				canvasClose: '<div class="feedback-canvas-close">' +
+					'<span class="fa-stack fa-lg">' +
+					  '<i class="fa fa-circle fa-stack-2x"></i>' +
+					  '<i class="fa fa-close fa-stack-1x fa-inverse"></i>' +
+					'</span>' +
+				'</div>',
 				submitSuccess:	'<div id="feedback-submit-success">' +
 				'<h3><i class="fa fa-bullhorn"></i> Feedback</h3>' +
 				'<p>Thank you for your feedback. We value every piece of feedback we receive.</p>' +
@@ -93,7 +99,12 @@
 					w 	= $(document).width(),
 					tpl = '<div id="feedback-module">';
 
-				tpl += settings.tpl.highlighter + settings.tpl.overview + '<canvas id="feedback-canvas"></canvas><div id="feedback-helpers"></div><input id="feedback-note" name="feedback-note" type="hidden"></div>';
+				tpl += settings.tpl.highlighter +
+					settings.tpl.overview +
+					'<canvas id="feedback-canvas"></canvas>' +
+					'<div id="feedback-helpers"></div>' +
+					'<input id="feedback-note" name="feedback-note" type="hidden">' +
+				'</div>';
 
 				$('body').append(tpl);
 
@@ -356,10 +367,11 @@
 					if (e.type === 'mouseenter') {
 						$(this).css('z-index', '30001');
 						$(this).append('<div class="feedback-helper-inner" style="width:' + ($(this).width() - 2) + 'px;height:' + ($(this).height() - 2) + 'px;position:absolute;margin:1px;"></div>');
-						$(this).append('<div id="feedback-close"><i class="fa fa-2x fa-close"></i></div>');
-						$(this).find('#feedback-close').css({
-							'top' 	: -1 * ($(this).find('#feedback-close').height() / 2) + 'px',
-							'left' 	: $(this).width() - ($(this).find('#feedback-close').width() / 2) + 'px'
+						$(this).append(settings.tpl.canvasClose);
+
+						$(this).find('.feedback-canvas-close').css({
+							'top' 	: -1 * ($(this).find('.feedback-canvas-close').height() / 2) + 'px',
+							'left' 	: $(this).width() - ($(this).find('.feedback-canvas-close').width() / 2) + 'px'
 						});
 
 						if ($(this).attr('data-type') == 'blackout') {
@@ -402,7 +414,7 @@
 					}
 				});
 
-				$(document).on('click', '#feedback-close', function() {
+				$(document).on('click', '.feedback-canvas-close', function() {
 					if (settings.highlightElement && $(this).parent().attr('data-highlight-id'))
 						var _hidx = $(this).parent().attr('data-highlight-id');
 
@@ -546,7 +558,7 @@
 			$(document).off('mouseup keyup');
 			$(document).off('mousedown', '.feedback-setblackout');
 			$(document).off('mousedown', '.feedback-sethighlight');
-			$(document).off('mousedown click', '#feedback-close');
+			$(document).off('mousedown click', '.feedback-canvas-close');
 			$(document).off('mousedown', '#feedback-canvas');
 			$(document).off('click', '#feedback-highlighter-next');
 			$(document).off('click', '#feedback-highlighter-back');

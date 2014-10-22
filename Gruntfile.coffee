@@ -4,7 +4,7 @@ module.exports = (grunt) ->
   path = require 'path'
 
   config =
-    connect_port: 8888
+    connect_port: 9999
     livereload_port: 31415
     app: 'src'
     ext: 'ext'
@@ -93,18 +93,21 @@ module.exports = (grunt) ->
         path: "http://localhost:#{config.connect_port}/"
 
 
+    # '' allows to serve everything so we can access for now our libs.
     connect:
       server:
         options:
           port: config.connect_port
           hostname: '*'
+          base: ['', config.dist]
 
     clean:
+      ext: config.ext
       dist: config.dist
       test: path.join config.test, config.js
 
 
-  grunt.registerTask 'dist', ['clean:dist', 'bower', 'coffee:dist', 'less:dist', 'copy']
-  grunt.registerTask 'test', ['dist', 'clean:test', 'coffee:test', 'jasmine']
   grunt.registerTask 'ext', ['clean:ext', 'bower']
+  grunt.registerTask 'dist', ['ext', 'clean:dist', 'coffee:dist', 'less:dist', 'copy']
+  grunt.registerTask 'test', ['dist', 'clean:test', 'coffee:test', 'jasmine']
   grunt.registerTask 'default', ['dist', 'connect', 'open', 'watch']

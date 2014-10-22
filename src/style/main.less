@@ -29,11 +29,17 @@
 }
 
 /* This is what appears when in hightlight and blackout mode to close the mode*/
-#feedback-close {
+.feedback-helper {
+  cursor: default;
+}
+
+.feedback-canvas-close {
   cursor: pointer;
   position: absolute;
-  color: @brand-danger;
 }
+
+// Not really sure if we need this
+.feedback-helper[data-type="highlight"]>.feedback-helper-inner {  background: rgba(0,68,255,0.1) }
 
 .feedback-wizard-close {
   cursor: pointer;

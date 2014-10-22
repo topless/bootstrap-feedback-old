@@ -1,8 +1,8 @@
 bootstrap-feedback
 ==================
 # This is a port of the original
-[feedback](http://ivoviz.github.io/feedback/) plugin for
-[Bootstrap](https://github.com/twbs/bootstrap)
+# [feedback](http://ivoviz.github.io/feedback/) plugin for
+# [Bootstrap](https://github.com/twbs/bootstrap)
 
 
 Feedback tool similar to the Google Feedback based on jQuery and HTML2Canvas.
