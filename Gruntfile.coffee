@@ -7,6 +7,7 @@ module.exports = (grunt) ->
     connect_port: 8888
     livereload_port: 31415
     app: 'src'
+    ext: 'ext'
     dist: 'dist'
     prod: 'prod'
     js: 'js'
@@ -16,9 +17,15 @@ module.exports = (grunt) ->
   grunt.initConfig
     config: config
 
-    wiredep:
-      app:
-        src: "#{config.app}/index.html"
+    bower:
+      install:
+        options:
+          targetDir: config.ext
+          layout: (type, component) ->
+            if type.search('/') > -1
+              path.join type.replace '/', "/#{component}/"
+            else
+              path.join type, component
 
     coffee:
       dist:
@@ -47,13 +54,10 @@ module.exports = (grunt) ->
     copy:
       dist:
         files: [
-            expand: true
-            cwd: config.app
-            src: ['**/*.html']
-            dest: config.dist
-          ,
-            src: "#{config.app}/static/icons.png"
-            dest: "#{config.dist}/style/icons.png"
+          expand: true
+          cwd: config.app
+          src: ['**/*.html']
+          dest: config.dist
         ]
 
 
@@ -68,7 +72,7 @@ module.exports = (grunt) ->
       app:
         options:
           livereload: config.livereload_port
-        files: '<%= config.app %>/**/*.{coffee,less}'
+        files: '<%= config.app %>/**/*.{coffee,less,css,js}'
         tasks: ['coffee:dist', 'less:dist']
 
       static:
@@ -100,7 +104,7 @@ module.exports = (grunt) ->
       test: path.join config.test, config.js
 
 
-  grunt.registerTask 'dist', ['clean:dist', 'wiredep', 'coffee:dist', 'less:dist', 'copy']
+  grunt.registerTask 'dist', ['clean:dist', 'bower', 'coffee:dist', 'less:dist', 'copy']
   grunt.registerTask 'test', ['dist', 'clean:test', 'coffee:test', 'jasmine']
-
+  grunt.registerTask 'ext', ['clean:ext', 'bower']
   grunt.registerTask 'default', ['dist', 'connect', 'open', 'watch']

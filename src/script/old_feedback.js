@@ -5,7 +5,7 @@
 (function($){
 
 	$.feedback = function(options) {
-	
+
     var settings = $.extend({
 			ajaxURL: 			'',
 			postBrowserInfo: 	true,
@@ -27,30 +27,63 @@
 			isDraggable: true,
 			onScreenshotTaken: function(){},
 			tpl: {
-				description:	'<div id="feedback-welcome"><div class="feedback-logo">Feedback</div><p>Feedback lets you send us suggestions about our products. We welcome problem reports, feature ideas and general comments.</p><p>Start by writing a brief description:</p><textarea id="feedback-note-tmp"></textarea><p>Next we\'ll let you identify areas of the page related to your description.</p><button id="feedback-welcome-next" class="feedback-next-btn feedback-btn-gray">Next</button><div id="feedback-welcome-error">Please enter a description.</div><div class="feedback-wizard-close"></div></div>',
-				highlighter:	'<div id="feedback-highlighter"><div class="feedback-logo">Feedback</div><p>Click and drag on the page to help us better understand your feedback. You can move this dialog if it\'s in the way.</p><button class="feedback-sethighlight feedback-active"><div class="ico"></div><span>Highlight</span></button><label>Highlight areas relevant to your feedback.</label><button class="feedback-setblackout"><div class="ico"></div><span>Black out</span></button><label class="lower">Black out any personal information.</label><div class="feedback-buttons"><button id="feedback-highlighter-next" class="feedback-next-btn feedback-btn-gray">Next</button><button id="feedback-highlighter-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div class="feedback-wizard-close"></div></div>',
-				overview:		'<div id="feedback-overview"><div class="feedback-logo">Feedback</div><div id="feedback-overview-description"><div id="feedback-overview-description-text"><h3>Description</h3><h3 class="feedback-additional">Additional info</h3><div id="feedback-additional-none"><span>None</span></div><div id="feedback-browser-info"><span>Browser Info</span></div><div id="feedback-page-info"><span>Page Info</span></div><div id="feedback-page-structure"><span>Page Structure</span></div></div></div><div id="feedback-overview-screenshot"><h3>Screenshot</h3></div><div class="feedback-buttons"><button id="feedback-submit" class="feedback-submit-btn feedback-btn-blue">Submit</button><button id="feedback-overview-back" class="feedback-back-btn feedback-btn-gray">Back</button></div><div id="feedback-overview-error">Please enter a description.</div><div class="feedback-wizard-close"></div></div>',
-				submitSuccess:	'<div id="feedback-submit-success"><div class="feedback-logo">Feedback</div><p>Thank you for your feedback. We value every piece of feedback we receive.</p><p>We cannot respond individually to every one, but we will use your comments as we strive to improve your experience.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>',
-				submitError:	'<div id="feedback-submit-error"><div class="feedback-logo">Feedback</div><p>Sadly an error occured while sending your feedback. Please try again.</p><button class="feedback-close-btn feedback-btn-blue">OK</button><div class="feedback-wizard-close"></div></div>'
+				highlighter: '<div id="feedback-highlighter">' +
+				'<h3><i class="fa fa-bullhorn"></i> Feedback</h3>' +
+				'<p>Click and drag on the page to help us better understand your feedback. You can move this dialog if it\'s in the way.</p>' +
+				'<button class="feedback-sethighlight disabled"><i class="fa fa-pencil"></i> Highlight</button>' +
+				'<label>Highlight areas relevant to your feedback.</label>' +
+				'<button class="feedback-setblackout"><i class="fa fa-eraser"></i> Black Out</button>' +
+				'<label class="lower">Black out any personal information.</label>' +
+				'<button id="feedback-highlighter-next">Next</button>' +
+				'<button id="feedback-highlighter-back">Back</button>' +
+				'<div class="feedback-wizard-close">&times;</div>' +
+				'</div>',
+				overview: '<div id="feedback-overview">' +
+				'<h3><i class="fa fa-bullhorn"></i> Feedback <small>Overview</small></h3>' +
+				'<div id="feedback-overview-description">' +
+					'<div id="feedback-overview-description-text">' +
+						'<h3>Description</h3>' +
+					'</div>' +
+				'</div>' +
+				'<div id="feedback-overview-screenshot">' +
+				'<h3>Screenshot</h3>' +
+				'</div>' +
+				'<button id="feedback-submit">Submit</button>' +
+				'<button id="feedback-overview-back">Back</button>' +
+				'<div id="feedback-overview-error">Please enter a description.</div>' +
+				'<div class="feedback-wizard-close">&times;</div>' +
+				'</div>',
+				submitSuccess:	'<div id="feedback-submit-success">' +
+				'<h3><i class="fa fa-bullhorn"></i> Feedback</h3>' +
+				'<p>Thank you for your feedback. We value every piece of feedback we receive.</p>' +
+				'<p>We cannot respond individually to every one, but we will use your comments as we strive to improve your experience.</p>' +
+				'<button class="feedback-close-btn">OK</button>' +
+				'<div class="feedback-wizard-close">&times;</div>' +
+				'</div>',
+				submitError:	'<div id="feedback-submit-error">' +
+				'<h3><i class="fa fa-bullhorn"></i> Feedback</h3>' +
+				'<p>Sadly an error occured while sending your feedback. Please try again.</p>' +
+				'<button class="feedback-close-btn">OK</button>' +
+				'<div class="feedback-wizard-close">&times;</div>' +
+				'</div>'
 			},
-			onClose: 			function() {},
+			onClose: function() {},
 			screenshotStroke:	true,
-			highlightElement:	true,
-			initialBox:			false
+			highlightElement:	true
     }, options);
 		var supportedBrowser = !!window.HTMLCanvasElement;
 		var isFeedbackButtonNative = settings.feedbackButton == '.feedback-btn';
 		var _html2canvas = false;
 		if (supportedBrowser) {
 			if(isFeedbackButtonNative) {
-				$('body').append('<button class="feedback-btn feedback-btn-gray">' + settings.initButtonText + '</button>');
+				$('body').append('<button class="feedback-btn">' + settings.initButtonText + '</button>');
 			}
 			$(document).on('click', settings.feedbackButton, function(){
 				if(isFeedbackButtonNative) {
 					$(this).hide();
 				}
 				if (!_html2canvas) {
-					$.getScript(settings.html2canvasURL, function() { 
+					$.getScript(settings.html2canvasURL, function() {
 						_html2canvas = true;
 					});
 				}
@@ -59,15 +92,11 @@
 					h 	= $(document).height(),
 					w 	= $(document).width(),
 					tpl = '<div id="feedback-module">';
-				
-				if (settings.initialBox) {
-					tpl += settings.tpl.description;
-				}
-				
+
 				tpl += settings.tpl.highlighter + settings.tpl.overview + '<canvas id="feedback-canvas"></canvas><div id="feedback-helpers"></div><input id="feedback-note" name="feedback-note" type="hidden"></div>';
-				
+
 				$('body').append(tpl);
-				
+
 				moduleStyle = {
 					'position':	'absolute',
 					'left': 	'0px',
@@ -77,19 +106,16 @@
 					'width': w,
 					'height': h
 				};
-				
+
 				$('#feedback-module').css(moduleStyle);
 				$('#feedback-canvas').attr(canvasAttr).css('z-index', '30000');
-				
-				if (!settings.initialBox) {
-					$('#feedback-highlighter-back').remove();
-					canDraw = true;
-					$('#feedback-canvas').css('cursor', 'crosshair');
-					$('#feedback-helpers').show();
-					$('#feedback-welcome').hide();
-					$('#feedback-highlighter').show();
-				}
-				
+				$('#feedback-highlighter-back').remove();
+				canDraw = true;
+				$('#feedback-canvas').css('cursor', 'crosshair');
+				$('#feedback-helpers').show();
+				$('#feedback-welcome').hide();
+				$('#feedback-highlighter').show();
+
 				if(settings.isDraggable) {
 					$('#feedback-highlighter').on('mousedown', function(e) {
 						var $d = $(this).addClass('feedback-draggable'),
@@ -102,7 +128,7 @@
 							_left 	= e.pageX + pos_x - drag_w;
 							_bottom = drag_h - e.pageY;
 							_right 	= drag_w - e.pageX;
-							
+
 							if (_left < 0) _left = 0;
 							if (_top < 0) _top = 0;
 							if (_right > $(window).width())
@@ -129,15 +155,15 @@
 				}
 
 				var ctx = $('#feedback-canvas')[0].getContext('2d');
-				
+
 				ctx.fillStyle = 'rgba(102,102,102,0.5)';
 				ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
-							
+
 				rect 		= {};
 				drag 		= false;
 				highlight 	= 1,
 				post		= {};
-				
+
 				if (settings.postBrowserInfo) {
 					post.browser 				= {};
 					post.browser.appCodeName	= navigator.appCodeName;
@@ -148,26 +174,21 @@
 					post.browser.platform		= navigator.platform;
 					post.browser.userAgent		= navigator.userAgent;
 					post.browser.plugins		= [];
-				
+
 					$.each(navigator.plugins, function(i) {
 						post.browser.plugins.push(navigator.plugins[i].name);
 					});
-					$('#feedback-browser-info').show();
 				}
-				
+
 				if (settings.postURL) {
 					post.url = document.URL;
-					$('#feedback-page-info').show();
 				}
-					
+
 				if (settings.postHTML) {
 					post.html = $('html').html();
-					$('#feedback-page-structure').show();
 				}
-				
-				if (!settings.postBrowserInfo && !settings.postURL && !settings.postHTML)
-					$('#feedback-additional-none').show();
-				
+
+
 				$(document).on('mousedown', '#feedback-canvas', function(e) {
 					if (canDraw) {
 
@@ -179,7 +200,7 @@
 					}
 				});
 
-				$(document).on('mouseup', function(){		
+				$(document).on('mouseup', function(){
 					if (canDraw) {
 						drag = false;
 
@@ -188,9 +209,9 @@
 							dwidth	= rect.w,
 							dheight	= rect.h;
 							dtype	= 'highlight';
-							
+
 						if (dwidth == 0 || dheight == 0) return;
-						
+
 						if (dwidth < 0) {
 							dleft 	+= dwidth;
 							dwidth 	*= -1;
@@ -199,30 +220,30 @@
 							dtop 	+= dheight;
 							dheight *= -1;
 						}
-						
+
 						if (dtop + dheight > $(document).height())
 							dheight = $(document).height() - dtop;
 						if (dleft + dwidth > $(document).width())
 							dwidth = $(document).width() - dleft;
-						
+
 						if (highlight == 0)
 							dtype = 'blackout';
-						
+
 						$('#feedback-helpers').append('<div class="feedback-helper" data-type="' + dtype + '" data-time="' + Date.now() + '" style="position:absolute;top:' + dtop + 'px;left:' + dleft + 'px;width:' + dwidth + 'px;height:' + dheight + 'px;z-index:30000;"></div>');
-						
+
 						redraw(ctx);
 						rect.w = 0;
 					}
-					
+
 				});
 
 				$(document).on('mousemove', function(e) {
 					if (canDraw && drag) {
 						$('#feedback-highlighter').css('cursor', 'default');
-						
+
 						rect.w = (e.pageX - $('#feedback-canvas').offset().left) - rect.startX;
 						rect.h = (e.pageY - $('#feedback-canvas').offset().top) - rect.startY;
-						
+
 						ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
 						ctx.fillStyle = 'rgba(102,102,102,0.5)';
 						ctx.fillRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
@@ -250,49 +271,49 @@
 						}
 					}
 				});
-				
+
 				if (settings.highlightElement) {
 					var highlighted = [],
 						tmpHighlighted = [],
 						hidx = 0;
-					
+
 					$(document).on('mousemove click', '#feedback-canvas',function(e) {
 						if (canDraw) {
 							redraw(ctx);
 							tmpHighlighted = [];
-							
+
 							$('#feedback-canvas').css('cursor', 'crosshair');
-							
+
 							$('* :not(body,script,iframe,div,section,.feedback-btn,#feedback-module *)').each(function(){
 								if ($(this).attr('data-highlighted') === 'true')
 									return;
-								
+
 								if (e.pageX > $(this).offset().left && e.pageX < $(this).offset().left + $(this).width() && e.pageY > $(this).offset().top + parseInt($(this).css('padding-top'), 10) && e.pageY < $(this).offset().top + $(this).height() + parseInt($(this).css('padding-top'), 10)) {
 										tmpHighlighted.push($(this));
 								}
 							});
-							
+
 							var $toHighlight = tmpHighlighted[tmpHighlighted.length - 1];
-							
+
 							if ($toHighlight && !drag) {
 								$('#feedback-canvas').css('cursor', 'pointer');
-								
+
 								var _x = $toHighlight.offset().left - 2,
 									_y = $toHighlight.offset().top - 2,
 									_w = $toHighlight.width() + parseInt($toHighlight.css('padding-left'), 10) + parseInt($toHighlight.css('padding-right'), 10) + 6,
 									_h = $toHighlight.height() + parseInt($toHighlight.css('padding-top'), 10) + parseInt($toHighlight.css('padding-bottom'), 10) + 6;
-								
+
 								if (highlight == 1) {
 									drawlines(ctx, _x, _y, _w, _h);
 									ctx.clearRect(_x, _y, _w, _h);
 									dtype = 'highlight';
 								}
-								
+
 								$('.feedback-helper').each(function() {
 									if ($(this).attr('data-type') == 'highlight')
 										ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
 								});
-								
+
 								if (highlight == 0) {
 									dtype = 'blackout';
 									ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -305,7 +326,7 @@
 										ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
 									}
 								});
-								
+
 								if (e.type == 'click' && e.pageX == rect.startX && e.pageY == rect.startY) {
 									$('#feedback-helpers').append('<div class="feedback-helper" data-highlight-id="' + hidx + '" data-type="' + dtype + '" data-time="' + Date.now() + '" style="position:absolute;top:' + _y + 'px;left:' + _x + 'px;width:' + _w + 'px;height:' + _h + 'px;z-index:30000;"></div>');
 									highlighted.push(hidx);
@@ -316,44 +337,31 @@
 						}
 					});
 				}
-				
+
 				$(document).on('mouseleave', 'body,#feedback-canvas', function() {
 					redraw(ctx);
 				});
-				
+
 				$(document).on('mouseenter', '.feedback-helper', function() {
 					redraw(ctx);
 				});
-				
-				$(document).on('click', '#feedback-welcome-next', function() {
-					if ($('#feedback-note').val().length > 0) {
-						canDraw = true;
-						$('#feedback-canvas').css('cursor', 'crosshair');
-						$('#feedback-helpers').show();
-						$('#feedback-welcome').hide();
-						$('#feedback-highlighter').show();
-					}
-					else {
-						$('#feedback-welcome-error').show();
-					}
-				});
-				
+
 				$(document).on('mouseenter mouseleave', '.feedback-helper', function(e) {
 					if (drag)
 						return;
-					
+
 					rect.w = 0;
 					rect.h = 0;
-					
+
 					if (e.type === 'mouseenter') {
 						$(this).css('z-index', '30001');
 						$(this).append('<div class="feedback-helper-inner" style="width:' + ($(this).width() - 2) + 'px;height:' + ($(this).height() - 2) + 'px;position:absolute;margin:1px;"></div>');
-						$(this).append('<div id="feedback-close"></div>');
+						$(this).append('<div id="feedback-close"><i class="fa fa-2x fa-close"></i></div>');
 						$(this).find('#feedback-close').css({
 							'top' 	: -1 * ($(this).find('#feedback-close').height() / 2) + 'px',
 							'left' 	: $(this).width() - ($(this).find('#feedback-close').width() / 2) + 'px'
 						});
-						
+
 						if ($(this).attr('data-type') == 'blackout') {
 							/* redraw white */
 							ctx.clearRect(0, 0, $('#feedback-canvas').width(), $('#feedback-canvas').height());
@@ -371,7 +379,7 @@
 							ctx.clearRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height())
 							ctx.fillStyle = 'rgba(0,0,0,0.75)';
 							ctx.fillRect(parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
-							
+
 							ignore = $(this).attr('data-time');
 
 							/* redraw black */
@@ -393,53 +401,52 @@
 						}
 					}
 				});
-				
+
 				$(document).on('click', '#feedback-close', function() {
 					if (settings.highlightElement && $(this).parent().attr('data-highlight-id'))
 						var _hidx = $(this).parent().attr('data-highlight-id');
-					
+
 					$(this).parent().remove();
-					
+
 					if (settings.highlightElement && _hidx)
 						$('[data-highlight-id="' + _hidx + '"]').removeAttr('data-highlighted').removeAttr('data-highlight-id');
-					
+
 					redraw(ctx);
 				});
 
 				$('#feedback-module').on('click', '.feedback-wizard-close,.feedback-close-btn', function() {
 					close();
 				});
-				
+
 				$(document).on('keyup', function(e) {
 					if (e.keyCode == 27)
 						close();
 				});
-				
+
 				$(document).on('selectstart dragstart', document, function(e) {
 					e.preventDefault();
 				});
-				
+
 				$(document).on('click', '#feedback-highlighter-back', function() {
 					canDraw = false;
 					$('#feedback-canvas').css('cursor', 'default');
 					$('#feedback-helpers').hide();
 					$('#feedback-highlighter').hide();
-					$('#feedback-welcome-error').hide();
 					$('#feedback-welcome').show();
 				});
-				
+
 				$(document).on('mousedown', '.feedback-sethighlight', function() {
 					highlight = 1;
-					$(this).addClass('feedback-active');
-					$('.feedback-setblackout').removeClass('feedback-active');
+					$(this).addClass('disabled');
+					$('.feedback-setblackout').removeClass('disabled');
 				});
-				
+
 				$(document).on('mousedown', '.feedback-setblackout', function() {
 					highlight = 0;
-					$(this).addClass('feedback-active');
-					$('.feedback-sethighlight').removeClass('feedback-active');
+					$(this).addClass('disabled');
+					$('.feedback-sethighlight').removeClass('disabled');
 				});
-				
+
 				$(document).on('click', '#feedback-highlighter-next', function() {
 					canDraw = false;
 					$('#feedback-canvas').css('cursor', 'default');
@@ -468,7 +475,7 @@
 								$('#feedback-overview-description-text>textarea').remove();
 								$('#feedback-overview-screenshot>img').remove();
 								$('<textarea id="feedback-overview-note">' + $('#feedback-note').val() + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
-								$('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');							
+								$('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
 							}
 							else {
 								$('#feedback-module').remove();
@@ -480,7 +487,7 @@
 						letterRendering: settings.letterRendering
 					});
 				});
-				
+
 				$(document).on('click', '#feedback-overview-back', function(e) {
 					canDraw = true;
 					$('#feedback-canvas').css('cursor', 'crosshair');
@@ -489,7 +496,7 @@
 					$('#feedback-highlighter').show();
 					$('#feedback-overview-error').hide();
 				});
-				
+
 				$(document).on('keyup', '#feedback-note-tmp,#feedback-overview-note', function(e) {
 					var tx;
 					if (e.target.id === 'feedback-note-tmp')
@@ -498,17 +505,17 @@
 						tx = $('#feedback-overview-note').val();
 						$('#feedback-note-tmp').val(tx);
 					}
-					
+
 					$('#feedback-note').val(tx);
 				});
-				
+
 				$(document).on('click', '#feedback-submit', function() {
-					canDraw = false; 
+					canDraw = false;
 
 					if ($('#feedback-note').val().length > 0) {
 						$('#feedback-submit-success,#feedback-submit-error').remove();
 						$('#feedback-overview').hide();
-						
+
 						post.img = img;
 						post.note = $('#feedback-note').val();
 
@@ -532,7 +539,7 @@
 				});
 			});
 		}
-			
+
 		function close() {
 			canDraw = false;
 			$(document).off('mouseenter mouseleave', '.feedback-helper');
@@ -543,14 +550,13 @@
 			$(document).off('mousedown', '#feedback-canvas');
 			$(document).off('click', '#feedback-highlighter-next');
 			$(document).off('click', '#feedback-highlighter-back');
-			$(document).off('click', '#feedback-welcome-next');
 			$(document).off('click', '#feedback-overview-back');
 			$(document).off('mouseleave', 'body');
 			$(document).off('mouseenter', '.feedback-helper');
 			$(document).off('selectstart dragstart', document);
 			$('#feedback-module').off('click', '.feedback-wizard-close,.feedback-close-btn');
 			$(document).off('click', '#feedback-submit');
-			
+
 			if (settings.highlightElement) {
 				$(document).off('click', '#feedback-canvas');
 				$(document).off('mousemove', '#feedback-canvas');
@@ -558,7 +564,7 @@
 			$('[data-highlighted="true"]').removeAttr('data-highlight-id').removeAttr('data-highlighted');
 			$('#feedback-module').remove();
 			$('.feedback-btn').show();
-			
+
 			settings.onClose.call(this);
 		}
 
@@ -570,7 +576,7 @@
 			$('.feedback-helper').each(function() {
 				if ($(this).attr('data-type') == 'highlight')
 					if (border)
-						drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());		
+						drawlines(ctx, parseInt($(this).css('left'), 10), parseInt($(this).css('top'), 10), $(this).width(), $(this).height());
 			});
 			$('.feedback-helper').each(function() {
 				if ($(this).attr('data-type') == 'highlight')
@@ -583,7 +589,7 @@
 				}
 			});
 		}
-		
+
 		function drawlines(ctx, x, y, w, h) {
 			ctx.strokeStyle		= settings.strokeStyle;
 			ctx.shadowColor		= settings.shadowColor;
@@ -592,15 +598,15 @@
 			ctx.shadowBlur		= settings.shadowBlur;
 			ctx.lineJoin		= settings.lineJoin;
 			ctx.lineWidth		= settings.lineWidth;
-			
+
 			ctx.strokeRect(x,y,w,h);
-			
+
 			ctx.shadowOffsetX	= 0;
 			ctx.shadowOffsetY	= 0;
 			ctx.shadowBlur		= 0;
 			ctx.lineWidth		= 1;
 		}
-	
+
 	};
-	
+
 }(jQuery));

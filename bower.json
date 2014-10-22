@@ -5,5 +5,23 @@
     "font-awesome": "~4",
     "jquery": "~2",
     "html2canvas": "~0.4"
+  },
+  "exportsOverride": {
+    "bootstrap": {
+      "js": "js/*.js",
+      "less": "less/*.less",
+      "less/mixins": "less/mixins/*.less",
+      "font": "fonts/*"
+    },
+    "font-awesome": {
+      "less": "less/*.less",
+      "font": "fonts/*"
+    },
+    "jquery": {
+      "js": "dist/jquery.js"
+    },
+    "html2canvas": {
+      "js": "build/html2canvas.js"
+    }
   }
 }

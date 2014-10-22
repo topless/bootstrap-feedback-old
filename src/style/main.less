@@ -1,3 +1,50 @@
 /* Overriding original css to play well along with Bootstrap */
 
+@import "../../ext/less/font-awesome/font-awesome";
+@import "../../ext/less/bootstrap/bootstrap";
 @import (less) "feedback.css";
+
+@fa-font-path:   "../../ext/font/font-awesome";
+@icon-font-path: "../../ext/font/bootstrap/";
+
+
+#feedback-highlighter,
+#feedback-submit-error,
+#feedback-overview {
+  button {
+    .btn;
+    .btn-default;
+  }
+}
+
+/* The visible button to trigger feedback */
+.feedback-btn {
+  .btn;
+  .btn-default;
+  position: fixed;
+  bottom: -3px;
+  right: 60px;
+  padding: 10px;
+  z-index: 1100; // Bootstrap goes to 1050
+}
+
+/* This is what appears when in hightlight and blackout mode to close the mode*/
+#feedback-close {
+  cursor: pointer;
+  position: absolute;
+  color: @brand-danger;
+}
+
+.feedback-wizard-close {
+  cursor: pointer;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  font-size: 1.3em;
+  opacity: 0.65;
+  &:hover {
+    opacity: 1
+  }
+}
